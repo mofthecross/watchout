@@ -10,8 +10,8 @@ var height = 500;
 
 for (var i = 0; i < 10; i++) {
   data.push({'id': i,
-            'cx': Math.random() * width,
-            'cy': Math.random() * height});
+            'x': Math.random() * width,
+            'y': Math.random() * height});
 }
 
 // svg === game board
@@ -23,27 +23,28 @@ var svg = d3.select('body')
 
 var update = function(data) {
 
-  var circles = svg.selectAll('circle')
+  var images = svg.selectAll('image')
               .data(data, function(d) {
                 return d.id;
               });
 
-  circles.enter()
-            .append('circle')
-            .attr('cx', function(d) {
-              return d.cx;
+  images.enter()
+            .append('image')
+            .attr('x', function(d) {
+              return d.x;
             })
-            .attr('cy', function(d) {
-              return d.cy;
+            .attr('y', function(d) {
+              return d.y;
             })
-            .attr('r', 25)
-            .attr('fill', 'blue');
+            .attr('height', 50)
+            .attr('width', 50)
+            .attr('xlink:href', 'asteroid.png');            
 
-  circles.attr('cx', function(d) {
-    return d.cx;
+  images.attr('x', function(d) {
+    return d.x;
   })
-  .attr('cy', function(d) {
-    return d.cy;
+  .attr('y', function(d) {
+    return d.y;
   });
 
 };
@@ -52,10 +53,10 @@ update(data);
 
 setInterval(function() {
   update(
-    data.map(function(circle) {
-      circle.cx = Math.random() * width;
-      circle.cy = Math.random() * height;
-      return circle;
+    data.map(function(image) {
+      image.x = Math.random() * width;
+      image.y = Math.random() * height;
+      return image;
     })
   );
 }, 500);
