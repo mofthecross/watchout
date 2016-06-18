@@ -1,13 +1,6 @@
-// start slingin' some d3 here.
-
-// create 10 svg elements
-  // imgs will be set to asteroid.png
-
-var data = [];
-
-// width/height of board = 800
-// width/height of asteroid = 50
-// width/height of ship = 50
+/*
+  Constant Variables
+*/
 var boardWidth = 800;
 var boardHeight = 800;
 
@@ -19,20 +12,33 @@ var shipHeight = Math.round(292 / 6);
 
 var numOfAsteroids = 10;
 
-for (var i = 0; i < numOfAsteroids; i++) {
-  data.push({'id': i,
-            'x': Math.random() * (boardWidth - asteroidWidth),
-            'y': Math.random() * (boardHeight - asteroidHeight)}
-  );
-}
+// How often the location of the asteroids are updated (in ms)
+var timeIntervalForAsteroids = 1200;
 
-// svg === game board
+// Time duration for asteroids to move to new location (in ms)
+var transitionForAsteroids = timeIntervalForAsteroids * 1;
+
+// How often we check for collisions between ship and asteroids (in ms)
+var timeIntervalForCollisionCheck = 100;
+
+// Once a collision is registered, the buffer period until next collision check (in ms)
+var timeoutForCollisionCheck = 400;
+
+// Game Over when the collision count reaches this number
+var maxNumOfCollisions = 5;
+
+
+/*
+  Start building game board
+*/
+// svg is the gameboard
 var svg = d3.select('div.board')
             .append('svg')
             .attr('width', boardWidth)
             .attr('height', boardHeight)
             .style('background-color', 'black');
 
+// Add ship to the board
 var ship = svg
             .append('image')
             .attr('class', 'draggable')
@@ -42,8 +48,8 @@ var ship = svg
             .attr('height', shipHeight)
             .attr('width', shipWidth);
 
+// Updates the location of the asteroids
 var update = function(data) {
-
   var images = svg.selectAll('image.asteroids')
               .data(data, function(d) {
                 return d.id;
@@ -62,7 +68,7 @@ var update = function(data) {
             .attr('width', asteroidWidth)
             .attr('xlink:href', 'asteroid.png');            
 
-  images.transition().duration(1000).attr('x', function(d) {
+  images.transition().duration(transitionForAsteroids).attr('x', function(d) {
     return d.x;
   })
   .attr('y', function(d) {
@@ -71,11 +77,28 @@ var update = function(data) {
 
 };
 
-update(data);
+// Initialize array of asteroidData objects
+var asteroidsData = [];
+for (var i = 0; i < numOfAsteroids; i++) {
+  asteroidsData.push({'id': i,
+            'x': Math.random() * (boardWidth - asteroidWidth),
+            'y': Math.random() * (boardHeight - asteroidHeight)}
+  );
+}
 
+// Add asteroids to the board
+update(asteroidsData);
+
+
+/*
+  Update 
+    1) the location of the asteroids
+    2) Current score
+    3) High score 
+*/
 setInterval(function() {
   update(
-    data.map(function(asteroid) {
+    asteroidsData.map(function(asteroid) {
       asteroid.x = Math.random() * (boardWidth - asteroidWidth);
       asteroid.y = Math.random() * (boardHeight - asteroidHeight);
       return asteroid;
@@ -83,10 +106,13 @@ setInterval(function() {
   );
   currentScore();
   highScore();
-}, 1000);
+}, timeIntervalForAsteroids);
 
 
-// drag 
+/*
+  Draggable
+    make the ship draggable
+*/
 var mover = function() {
   d3.select('image.draggable')
     .attr('x', function(d) {
@@ -113,12 +139,19 @@ d3.select('image.draggable')
   .call(drag);
 
 
-// collisions
+/*
+  Collisions
+    register collisions between ship and asteroids
+*/
+
+// Helper function that takes two Document Elements 
+// and returns a boolean reflecting whether the two elements 
+// physcially overlap
 var intersectRect = function(r1, r2) {
-  var r1 = r1.getBoundingClientRect();    //BOUNDING BOX OF THE FIRST OBJECT
-  var r2 = r2.getBoundingClientRect();    //BOUNDING BOX OF THE SECOND OBJECT
+  var r1 = r1.getBoundingClientRect();    // bounding box of the first object
+  var r2 = r2.getBoundingClientRect();    // bounding box of the second object
  
-  //CHECK IF THE TWO BOUNDING BOXES OVERLAP
+  // check if the two bounding boxes overlap
   return !(r2.left > r1.right || 
            r2.right < r1.left || 
            r2.top > r1.bottom ||
@@ -126,6 +159,8 @@ var intersectRect = function(r1, r2) {
 };
 
 var collision = 0;
+
+// Denotes whether collisions are currently being ignored due to the buffer period 
 var flag = false;
 
 setInterval(function() {
@@ -139,31 +174,44 @@ setInterval(function() {
 
   for (var i = 0; i < asteroids[0].length; i++) {
     if (intersectRect(ship[0][0], asteroids[0][i])) {
+      // start buffer period for collisions
+      flag = true;
+
+      // set timer to end buffer period
+      setTimeout(function() {
+        flag = false;
+      }, timeoutForCollisionCheck);
+      
       collision++;
-      if (collision === 5) {
+
+      // Game Over
+      if (collision === maxNumOfCollisions) {
         collision = 0;
         highscore = current;
-        current = 0;
         frozen = true;
+        current = 0;
         d3.select('.current span').data([current]).text(function(d) {
           return d;
         });
       }
-      flag = true;
-      setTimeout(function() {
-        flag = false;
-      }, 400);
+
+      // update collision number on screen
       d3.select('.collisions span').data([collision]).text(function(d) {
         return d;
       });
+
       return;
     }
   }
-}, 100);
+}, timeIntervalForCollisionCheck);
 
 
+/*
+  Update Current score and High score
+*/
 var current = 0;
 var highscore = 0;
+
 var currentScore = function() {
   current++;
   if (current > highscore) {
@@ -174,7 +222,9 @@ var currentScore = function() {
   });
 };
 
+// Flag to track whether highScore is frozen or increasing
 var frozen = false;
+
 var highScore = function() {
   if (frozen) {
     return;
@@ -182,16 +232,5 @@ var highScore = function() {
   d3.select('.highscore span').data([current]).text(function(d) {
     return d;
   });
-
 };
-
-
-
-
-
-
-
-
-
-
 
