@@ -8,32 +8,39 @@ var data = [];
 // width/height of board = 800
 // width/height of asteroid = 50
 // width/height of ship = 50
-var width = 800 - 50;
-var height = 800 - 50;
+var boardWidth = 800;
+var boardHeight = 800;
+
+var asteroidWidth = Math.round(196 / 4);
+var asteroidHeight = Math.round(196 / 4);
+
+var shipWidth = Math.round(484 / 6);
+var shipHeight = Math.round(292 / 6);
 
 var numOfAsteroids = 10;
 
 for (var i = 0; i < numOfAsteroids; i++) {
   data.push({'id': i,
-            'x': Math.random() * width,
-            'y': Math.random() * height});
+            'x': Math.random() * (boardWidth - asteroidWidth),
+            'y': Math.random() * (boardHeight - asteroidHeight)}
+  );
 }
 
 // svg === game board
 var svg = d3.select('div.board')
             .append('svg')
-            .attr('width', width)
-            .attr('height', height)
+            .attr('width', boardWidth)
+            .attr('height', boardHeight)
             .style('background-color', 'black');
 
 var ship = svg
             .append('image')
             .attr('class', 'draggable')
             .attr('xlink:href', 'ship.png')
-            .attr('x', width / 2 - 70 / 2)
-            .attr('y', height / 2 - 70 / 2)
-            .attr('height', 70)
-            .attr('width', 70);
+            .attr('x', boardWidth / 2 - shipWidth / 2)
+            .attr('y', boardHeight / 2 - shipHeight / 2)
+            .attr('height', shipHeight)
+            .attr('width', shipWidth);
 
 var update = function(data) {
 
@@ -51,8 +58,8 @@ var update = function(data) {
             .attr('y', function(d) {
               return d.y;
             })
-            .attr('height', 50)
-            .attr('width', 50)
+            .attr('height', asteroidHeight)
+            .attr('width', asteroidWidth)
             .attr('xlink:href', 'asteroid.png');            
 
   images.transition().duration(1000).attr('x', function(d) {
@@ -68,10 +75,10 @@ update(data);
 
 setInterval(function() {
   update(
-    data.map(function(image) {
-      image.x = Math.random() * width;
-      image.y = Math.random() * height;
-      return image;
+    data.map(function(asteroid) {
+      asteroid.x = Math.random() * (boardWidth - asteroidWidth);
+      asteroid.y = Math.random() * (boardHeight - asteroidHeight);
+      return asteroid;
     })
   );
   currentScore();
@@ -82,8 +89,22 @@ setInterval(function() {
 // drag 
 var mover = function() {
   d3.select('image.draggable')
-    .attr('x', d3.event.x - parseInt(d3.select('image.draggable').attr('width')) / 2)
-    .attr('y', d3.event.y - parseInt(d3.select('image.draggable').attr('height')) / 2);
+    .attr('x', function(d) {
+      var newX = d3.event.x - shipWidth / 2;
+      if (newX < 0) {
+        return 0;
+      } else {
+        return Math.min(boardWidth - shipWidth, newX);
+      }
+    })
+    .attr('y', function(d) {
+      var newY = d3.event.y - shipHeight / 2;
+      if (newY < 0) {
+        return 0;
+      } else {
+        return Math.min(boardHeight - shipHeight, newY);
+      }
+    });
 };
 
 var drag = d3.behavior.drag().on('drag', mover);
