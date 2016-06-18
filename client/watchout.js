@@ -11,7 +11,9 @@ var data = [];
 var width = 800 - 50;
 var height = 800 - 50;
 
-for (var i = 0; i < 10; i++) {
+var numOfAsteroids = 10;
+
+for (var i = 0; i < numOfAsteroids; i++) {
   data.push({'id': i,
             'x': Math.random() * width,
             'y': Math.random() * height});
@@ -31,8 +33,8 @@ var ship = svg
             .attr('xlink:href', 'ship.png')
             .attr('x', width / 2)
             .attr('y', height / 2)
-            .attr('height', 50)
-            .attr('width', 50);
+            .attr('height', 100)
+            .attr('width', 100);
 
 var update = function(data) {
 
@@ -73,10 +75,10 @@ setInterval(function() {
       return image;
     })
   );
-}, 500);
+}, 1000);
 
 
-//drag
+// drag 
 var mover = function() {
   d3.select('image.draggable')
     .attr('x', d3.event.x - parseInt(d3.select('image.draggable').attr('width')) / 2)
@@ -87,6 +89,53 @@ var drag = d3.behavior.drag().on('drag', mover);
 
 d3.select('image.draggable')
   .call(drag);
+
+
+// collisions
+var intersectRect = function(r1, r2) {
+  var r1 = r1.getBoundingClientRect();    //BOUNDING BOX OF THE FIRST OBJECT
+  var r2 = r2.getBoundingClientRect();    //BOUNDING BOX OF THE SECOND OBJECT
+ 
+  //CHECK IF THE TWO BOUNDING BOXES OVERLAP
+  return !(r2.left > r1.right || 
+           r2.right < r1.left || 
+           r2.top > r1.bottom ||
+           r2.bottom < r1.top);
+};
+
+var collision = 0;
+var flag = false;
+
+setInterval(function() {
+  // check collision
+  var asteroids = d3.selectAll('image.asteroids');
+  var ship = d3.select('image.draggable');
+
+  if (flag) {
+    return;
+  }
+
+  for (var i = 0; i < asteroids[0].length; i++) {
+    if (intersectRect(ship[0][0], asteroids[0][i])) {
+      collision++;
+      flag = true;
+      setTimeout(function() {
+        flag = false;
+      }, 400);
+      d3.select('.collisions span').data([collision]).text(function(d) {
+        return d;
+      });
+      return;
+    }
+  }
+}, 100);
+
+
+
+
+
+
+
 
 
 
