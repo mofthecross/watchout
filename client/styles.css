@@ -1,28 +1,55 @@
-/* your beautiful css styling goes here! */
 
-/* Note: an asteroid image is included in this repo.
-Feel free to use it if you like. */
+h4 {
+  text-align: center;
+  margin: 0 0;
+}
 
-body {
-  height: 100%;
-  /*background-color: black*/
+.scoreboard {
+  margin: 10px auto;
+  text-align: center;
+  box-sizing: border-box;
+  width: 800;
 }
 
 .draggable {
-  cursor: move;
+  cursor: pointer;
 }
 
+svg {
+  align-content: center;
+  background-image: url("http://www.wallpaperhi.com/thumbnails/detail/20120229/outer%20space%20planets%201752x1168%20wallpaper_www.wallpaperhi.com_40.jpg");
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  display: block;
+  margin: auto;
+}
+
+/*
 .asteroids {
   animation-name: asteroids;
   animation-duration: 4s;
   animation-iteration-count: infinite;
-  /*transition: transform 1s;*/
 }
 
 @keyframes asteroids {
+  0% {transform: rotate(0deg) translate(-24.5px, -24.5px);}
+  50% {transform: rotate(180deg) translate(-24.5px, -24.5px);}
+  100% {transform: rotate(360deg) translate(-24.5px, -24.5px);}
+  
+
   0% {transform: rotate(0deg);}
   50% {transform: rotate(180deg);}
   100% {transform: rotate(360deg);}
-/*  0% {opacity: 0;}
-  100% {opacity: 1;}*/
+}*/
+
+.flash {
+  animation-name: flash;
+  animation-duration: 1s;
+  /*background-color: black;*/
+}
+
+@keyframes flash {
+  0% {background-color: white;}
+  50% {background-color: red;}
+  100% {background-color: white;}
 }
