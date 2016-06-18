@@ -17,30 +17,31 @@ h4 {
 
 svg {
   align-content: center;
-  background-image: url("http://www.wallpaperhi.com/thumbnails/detail/20120229/outer%20space%20planets%201752x1168%20wallpaper_www.wallpaperhi.com_40.jpg");
+  background-image: url("http://i.imgur.com/gPXEMN6.gif");
   background-repeat: no-repeat;
   background-size: auto 100%;
   display: block;
   margin: auto;
 }
 
-/*
+
 .asteroids {
   animation-name: asteroids;
-  animation-duration: 4s;
+  animation-duration: 1s;
   animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  transform-origin: 50% 50%;
 }
 
 @keyframes asteroids {
-  0% {transform: rotate(0deg) translate(-24.5px, -24.5px);}
+ /* 0% {transform: rotate(0deg) translate(-24.5px, -24.5px);}
   50% {transform: rotate(180deg) translate(-24.5px, -24.5px);}
-  100% {transform: rotate(360deg) translate(-24.5px, -24.5px);}
+  100% {transform: rotate(360deg) translate(-24.5px, -24.5px);}*/
   
-
   0% {transform: rotate(0deg);}
   50% {transform: rotate(180deg);}
   100% {transform: rotate(360deg);}
-}*/
+}
 
 .flash {
   animation-name: flash;

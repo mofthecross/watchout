@@ -65,7 +65,8 @@ var update = function(data) {
             })
             .attr('height', asteroidHeight)
             .attr('width', asteroidWidth)
-            .attr('xlink:href', 'asteroid.png');            
+            .attr('xlink:href', 'asteroid.png');
+            //.attr('xlink:href', 'http://pligame.sourceforge.net/images/asteroidA.gif');            
 
   images.transition().duration(transitionForAsteroids).attr('x', function(d) {
     return d.x;
@@ -73,7 +74,6 @@ var update = function(data) {
   .attr('y', function(d) {
     return d.y;
   });
-
 };
 
 // Initialize array of asteroidData objects
