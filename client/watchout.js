@@ -33,8 +33,8 @@ var ship = svg
             .attr('xlink:href', 'ship.png')
             .attr('x', width / 2)
             .attr('y', height / 2)
-            .attr('height', 100)
-            .attr('width', 100);
+            .attr('height', 70)
+            .attr('width', 70);
 
 var update = function(data) {
 
@@ -56,7 +56,7 @@ var update = function(data) {
             .attr('width', 50)
             .attr('xlink:href', 'asteroid.png');            
 
-  images.attr('x', function(d) {
+  images.transition().duration(1000).attr('x', function(d) {
     return d.x;
   })
   .attr('y', function(d) {
@@ -75,6 +75,8 @@ setInterval(function() {
       return image;
     })
   );
+  currentScore();
+  highScore();
 }, 1000);
 
 
@@ -118,6 +120,15 @@ setInterval(function() {
   for (var i = 0; i < asteroids[0].length; i++) {
     if (intersectRect(ship[0][0], asteroids[0][i])) {
       collision++;
+      if (collision === 5) {
+        collision = 0;
+        highscore = current;
+        current = 0;
+        frozen = true;
+        d3.select('.current span').data([current]).text(function(d) {
+          return d;
+        });
+      }
       flag = true;
       setTimeout(function() {
         flag = false;
@@ -129,6 +140,30 @@ setInterval(function() {
     }
   }
 }, 100);
+
+
+var current = 0;
+var highscore = 0;
+var currentScore = function() {
+  current++;
+  if (current > highscore) {
+    frozen = false;
+  }
+  d3.select('.current span').data([current]).text(function(d) {
+    return d;
+  });
+};
+
+var frozen = false;
+var highScore = function() {
+  if (frozen) {
+    return;
+  }
+  d3.select('.highscore span').data([current]).text(function(d) {
+    return d;
+  });
+
+};
 
 
 
