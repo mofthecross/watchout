@@ -22,7 +22,7 @@ var transitionForAsteroids = timeIntervalForAsteroids * 1;
 var timeIntervalForCollisionCheck = 100;
 
 // Once a collision is registered, the buffer period until next collision check (in ms)
-var timeoutForCollisionCheck = 400;
+var timeoutForCollisionCheck = 700;
 
 // Game Over when the collision count reaches this number
 var maxNumOfCollisions = 5;
@@ -35,8 +35,7 @@ var maxNumOfCollisions = 5;
 var svg = d3.select('div.board')
             .append('svg')
             .attr('width', boardWidth)
-            .attr('height', boardHeight)
-            .style('background-color', 'black');
+            .attr('height', boardHeight);
 
 // Add ship to the board
 var ship = svg
@@ -164,6 +163,7 @@ var collision = 0;
 var flag = false;
 
 setInterval(function() {
+
   // check collision
   var asteroids = d3.selectAll('image.asteroids');
   var ship = d3.select('image.draggable');
@@ -172,8 +172,13 @@ setInterval(function() {
     return;
   }
 
+  d3.select('.collisions').classed('flash', false);
+
   for (var i = 0; i < asteroids[0].length; i++) {
     if (intersectRect(ship[0][0], asteroids[0][i])) {
+      // flash the background red when collision occurs
+      d3.select('.collisions').classed('flash', true);
+
       // start buffer period for collisions
       flag = true;
 
