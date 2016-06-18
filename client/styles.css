@@ -3,3 +3,26 @@
 /* Note: an asteroid image is included in this repo.
 Feel free to use it if you like. */
 
+body {
+  height: 100%;
+  /*background-color: black*/
+}
+
+.draggable {
+  cursor: move;
+}
+
+.asteroids {
+  animation-name: asteroids;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  /*transition: transform 1s;*/
+}
+
+@keyframes asteroids {
+  0% {transform: rotate(0deg);}
+  50% {transform: rotate(180deg);}
+  100% {transform: rotate(360deg);}
+/*  0% {opacity: 0;}
+  100% {opacity: 1;}*/
+}
