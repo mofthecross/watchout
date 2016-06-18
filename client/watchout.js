@@ -24,15 +24,14 @@ var svg = d3.select('div.board')
             .append('svg')
             .attr('width', width)
             .attr('height', height)
-            //.attr('fill', 'black');
             .style('background-color', 'black');
 
 var ship = svg
             .append('image')
             .attr('class', 'draggable')
             .attr('xlink:href', 'ship.png')
-            .attr('x', width / 2)
-            .attr('y', height / 2)
+            .attr('x', width / 2 - 70 / 2)
+            .attr('y', height / 2 - 70 / 2)
             .attr('height', 70)
             .attr('width', 70);
 
